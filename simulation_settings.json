@@ -1,0 +1,11 @@
+{
+    "grid_size": 100,
+    "win_width": 800,
+    "win_height": 800,
+    "time_factor": 0.1,
+    "rabbits_per_day": 100,
+    "rabbit_radius": 7,
+    "rabbit_hunger": 2,
+    "base_food_rate": 200,
+    "food_lifespan": 60 
+}
