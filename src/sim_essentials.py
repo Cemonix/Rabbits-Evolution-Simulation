@@ -129,6 +129,12 @@ class Rabbit(Entity):
 
             yield self.env.simpy_env.timeout(1 * self.env.time_factor)
 
+            self.hunger += 0.1
+
+            if self.hunger > 5:
+                self.remove_rabbit()
+                break
+
     def adjust_move_if_outside_grid(
         self, new_x: int, new_y: int, move_dx: int, move_dy: int
     ) -> Tuple[int, int]:
@@ -158,10 +164,11 @@ class Rabbit(Entity):
         return nearby_food
     
     def consume_food(self, food: 'Food'):
-        self.hunger += 1
-        self.env.logger.log(f"Consumed food at ({food.x}, {food.y})", entity=self)
-
-        # Remove food from the environment
+        self.hunger -= 5
+        self.env.logger.log(
+            f"Consumed food at ({food.x}, {food.y}) and has {self.hunger} hunger",
+            entity=self
+        )
         self.env.food.remove(food)
 
     def move_towards(self, food: 'Food') -> Tuple[int, int]:
@@ -179,6 +186,12 @@ class Rabbit(Entity):
                 best_move = move
 
         return best_move
+    
+    def remove_rabbit(self) -> None:
+        # Remove this rabbit entity from the environment
+        if self in self.env.rabbits:
+            self.env.rabbits.remove(self)
+            self.env.logger.log(f"Rabbit at ({self.x}, {self.y}) died", entity=self)
     
 class RabbitFactory(Entity):
     def __init__(self, env: Environment):
@@ -207,14 +220,20 @@ class Food(Entity):
         self.x = x
         self.y = y
         self.lifespan: int = GlobalSettings.settings.food_lifespan
+        self.current_lifespan = self.lifespan
 
     def lifetime(self) -> None:
-        try:
-            yield self.env.simpy_env.timeout(self.lifespan * self.env.time_factor)
-            self.remove_food()
-        except simpy.Interrupt:
-            # If the food is eaten before the timeout, it gets interrupted
-            pass
+        while self.current_lifespan > 0:
+            try:
+                yield self.env.simpy_env.timeout(1 * self.env.time_factor)
+                self.current_lifespan -= 1  # Decrease the lifespan after each step
+            except simpy.Interrupt:
+                # If the food is eaten before the timeout, it gets interrupted
+                break  # Exit the loop if food is consumed
+
+        if self.current_lifespan <= 0:
+            self.remove_food()  # Call the removal function if lifespan is depleted
+
 
     def remove_food(self) -> None:
         # Remove this food entity from the environment

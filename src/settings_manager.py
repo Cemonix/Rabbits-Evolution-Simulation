@@ -15,9 +15,10 @@ class SimulationSettings(BaseModel):
     grid_size: int
     win_width: int
     win_height: int
+    path_to_sprites: str
     time_factor: float
     rabbits_per_day: int
     rabbit_radius: int
-    rabbit_hunger: int
+    rabbit_hunger: float
     base_food_rate: int
     food_lifespan: int
