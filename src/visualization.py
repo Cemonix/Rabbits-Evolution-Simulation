@@ -58,14 +58,23 @@ class SimulationVisualization:
         # Update the visualization
         self.window.update()
 
+    def end_simulation(self, _) -> None:
+        self.is_simulation_running = False
+
     def run(self, sim_duration: float) -> None:
-        while self.env.simpy_env.now < sim_duration:
+        self.is_simulation_running = True
+        self.window.bind('q', self.end_simulation)
+
+        while self.env.simpy_env.now < sim_duration and self.is_simulation_running:
             self.update()
             self.env.collector.environment_collector.collect(
                 self.env.simpy_env.now, len(self.env.rabbits), len(self.env.food),
-                self.env.removed_rabbits, self.env.removed_food
+                self.env.removed_rabbits, self.env.eaten_food, self.env.decayed_food
             )
             self.env.simpy_env.step()
+
+        self.canvas.destroy()
+        self.window.destroy()
 
     def load_image(self, path_to_image: str) -> ImageTk.PhotoImage:
         image = Image.open(path_to_image)

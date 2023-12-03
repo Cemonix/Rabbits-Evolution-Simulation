@@ -30,23 +30,24 @@ class Entity(ABC):
 
 class Environment:
     def __init__(
-        self, grid_size: int, realtime: bool = True
+        self, grid_size: int, collector: Collector, realtime: bool = True
     ):
         self.rabbit_settings = GlobalSettings.settings.rabbit
         self.food_settings = GlobalSettings.settings.food
         self.env_settings = GlobalSettings.settings.environment
         
         self.time_factor = self.env_settings.time_factor
+        self.collector = collector
         self.simpy_env = simpy.RealtimeEnvironment(
             self.time_factor, strict=False
         ) if realtime else simpy.Environment()
         self.grid_size: int = grid_size
         self.logger = Logger(self)
-        self.collector = Collector()
         self.rabbits: List[Rabbit] = []
         self.food: List[Food] = []
         self.removed_rabbits = 0
-        self.removed_food = 0
+        self.eaten_food = 0
+        self.decayed_food = 0
 
     def add_rabbit(self, rabbit: 'Rabbit') -> None:
         self.rabbits.append(rabbit)
@@ -244,7 +245,7 @@ class Rabbit(Entity):
         self.hunger -= food.nutrition
         self.env.food.remove(food)
         self.nearest_food = None
-        self.env.removed_food += 1 
+        self.env.eaten_food += 1 
         self.env.logger.log(
             f"Consumed food at ({food.x}, {food.y}) and has {self.hunger} hunger",
             entity=self
@@ -393,14 +394,15 @@ class Food(Entity):
                 # If the food is eaten before the timeout, it gets interrupted
                 break  # Exit the loop if food is consumed
 
+        # Call the removal function if lifespan is depleted
         if self.current_lifespan <= 0:
-            self.remove_decayed_food()  # Call the removal function if lifespan is depleted
+            self.remove_decayed_food()
 
     def remove_decayed_food(self) -> None:
         # Remove this food from the environment
         if self in self.env.food:
             self.env.food.remove(self)
-            self.env.removed_food += 1
+            self.env.decayed_food += 1
             self.env.logger.log(f"Food at ({self.x}, {self.y}) decayed", entity=self)
 
 class FoodFactory(Entity):
@@ -421,7 +423,6 @@ class FoodFactory(Entity):
 
             self.generate_food()
 
-    # TODO: Generate food on empty cells only
     def generate_food(self) -> None:
         while True:
             # Randomly select a grid cell for food placement
