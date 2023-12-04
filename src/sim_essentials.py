@@ -523,7 +523,7 @@ class Rabbit(Entity):
                 potential_partners.append(potential_partner)
         return potential_partners
 
-    def choose_partner(self, potential_partners: List['Rabbit']) -> 'Rabbit' | None:
+    def choose_partner(self, potential_partners: List['Rabbit']) -> 'Rabbit':
         """
         Choose a suitable breeding partner from a list of potential partners.
 
