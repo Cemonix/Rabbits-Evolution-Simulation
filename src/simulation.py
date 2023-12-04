@@ -20,5 +20,10 @@ if __name__ == "__main__":
     visualization.run(GlobalSettings.day_minutes * settings.environment.time_factor)
 
     stats_visualization = StatisticsVisualization(collector)
-    stats_visualization.plot_environment_data(save_path="statistics/env_stats.png")
+    stats_visualization.save_environment_stats_fig(
+        save_path="statistics/env_stats.png"
+    )
+    stats_visualization.save_rabbit_stats_fig(
+        save_path="statistics/rabbit_stats.png"
+    )
     stats_visualization.display_rabbit_stats()

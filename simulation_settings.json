@@ -4,16 +4,16 @@
         "win_width": 800,
         "win_height": 800,
         "path_to_sprites": "images/sprites",
-        "time_factor": 0.15
+        "time_factor": 0.2
     },
     "rabbit": {
         "start_rabbits_count": 10,
         "rate": 60,
-        "generate_new": true,
-        "scan_radius": 12,
+        "generate_new": false,
+        "scan_radius": 25,
         "base_hunger": -5,
         "base_hunger_factor": 0.2,
-        "hunger_fatique": 5.0,
+        "hunger_fatigue": 5.0,
         "hunger_to_breed": -10,
         "base_speed": 1,
         "base_breed_timeout": 10,
@@ -21,10 +21,10 @@
     },
     "food": {
         "start_food_count": 20,
-        "rate": 400,
+        "rate": 550,
         "generate_new": true,
         "min_nutrition": 5,
         "max_nutrition": 10,
-        "lifespan": 100
+        "lifespan": 60
     }
 }
