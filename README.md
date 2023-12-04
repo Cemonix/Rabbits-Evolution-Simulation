@@ -42,7 +42,7 @@ The simulation can be customized by editing the configuration `simulation_settin
 
 - `rabbit_settings`: Configure rabbit attributes such as hunger, speed, and breeding behavior.
 
-- `food_settings.`: Adjust food-related settings, including nutrition levels and food generation rates.
+- `food_settings`: Adjust food-related settings, including nutrition levels and food generation rates.
 
 ## Results
 
