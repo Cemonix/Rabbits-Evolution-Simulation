@@ -4,7 +4,7 @@ from sim_statistics import Collector, StatisticsVisualization
 from visualization import SimulationVisualization
 
 if __name__ == "__main__":
-    GlobalSettings.load_settings("simulation_settings.json")
+    GlobalSettings.load_settings("config/simulation_settings.json")
     settings = GlobalSettings.settings
 
     grid_size = settings.environment.grid_size
